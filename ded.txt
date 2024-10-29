@@ -1,0 +1,1499 @@
+-- anticheat bypasser
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/universal-anticheat-bypass/main/script",true))()
+
+-- execution logs
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/polologs",true))()
+
+-- loading screen
+
+-- Services
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+-- Settings
+local settings = {
+guiDuration = 3,
+mainText = "ZatiroUi Loading...",
+loadingText = "ZatiroUi Loaded",
+loadedText = "Zatiro Ui",
+creditsText = "Credits to Zatirohood",
+countdownTextEnabled = true,
+countdownTextDuration = 3,
+mainTextDuration = 1,
+loadingTextDuration = 1,
+loadedTextDuration = 1,
+creditsTextDuration = 1,
+font = Enum.Font.Arcade
+}
+
+-- Create ScreenGui and BlurEffect
+local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+local screenGui = Instance.new("ScreenGui", playerGui)
+screenGui.Name = "BlurGui"
+
+local blurEffect = Instance.new("BlurEffect", game:GetService("Lighting"))
+blurEffect.Name = "BlurEffect"
+blurEffect.Size = 0
+
+local UICornerLeft = Instance.new("UICorner", leftImageLabel)
+UICornerLeft.CornerRadius = UDim.new(0.1, 0)
+
+-- Create Labels
+local function createLabel(name, text, position, size, textSize, visible)
+local label = Instance.new("TextLabel", screenGui)
+label.Name = name
+label.BackgroundTransparency = 1
+label.Position = position
+label.Size = size
+label.Font = settings.font
+label.Text = text
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.TextScaled = true
+label.TextStrokeTransparency = 0.8
+label.TextSize = textSize
+label.Visible = visible
+return label
+end
+
+local textLabel = createLabel("TextLabel", settings.mainText, UDim2.new(0.5, -200, 0.5, -50), UDim2.new(0, 400, 0, 100), 40, true)
+local creditsLabel = createLabel("CreditsLabel", settings.creditsText, UDim2.new(0.5, -200, 0.5, 60), UDim2.new(0, 400, 0, 50), 8, true)
+local countdownLabel = createLabel("CountdownLabel", "", UDim2.new(0.5, -200, 0.5, -100), UDim2.new(0, 400, 0, 50), 20, false)
+
+-- Rainbow Effect
+local function applyRainbowEffect(label)
+local UIStroke = Instance.new("UIStroke", label)
+UIStroke.Thickness = 2
+UIStroke.Transparency = 0.5
+spawn(function()
+    local hue = 0
+    while label and label.Parent do
+        hue = (hue + 1) % 360
+        local color = Color3.fromHSV(hue / 360, 1, 1)
+        UIStroke.Color = color
+        label.TextColor3 = color
+        wait(0.01)
+    end
+end)
+end
+
+applyRainbowEffect(textLabel)
+applyRainbowEffect(creditsLabel)
+applyRainbowEffect(countdownLabel)
+
+-- Tween Blur Effect
+TweenService:Create(blurEffect, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {Size = 20}):Play()
+
+-- Countdown Update
+local function updateCountdown()
+if not settings.countdownTextEnabled then return end
+countdownLabel.Visible = true
+for timeLeft = settings.countdownTextDuration, 0, -1 do
+    countdownLabel.Text = "Please wait " .. timeLeft .. " seconds"
+    wait(1)
+end
+countdownLabel.Text = "Please wait 0 seconds"
+wait(1)
+countdownLabel.Visible = false
+end
+
+-- Show Text
+local function showText(label, text, duration)
+label.Text = text
+wait(duration)
+end
+
+showText(textLabel, settings.mainText, settings.mainTextDuration)
+showText(textLabel, settings.loadingText, settings.loadingTextDuration)
+updateCountdown()
+showText(textLabel, settings.loadedText, settings.loadedTextDuration)
+wait(settings.creditsTextDuration)
+
+-- Cleanup
+screenGui:Destroy()
+blurEffect:Destroy()
+
+-- Zatiro camlock
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/aurax%20ui%20library%20source%20code",true))()
+local function getFormattedTime()
+    local hour = tonumber(os.date("%I"))
+    local minute = os.date("%M")
+    local ampm = os.date("%p")
+    return string.format("%d:%s %s", hour, minute, ampm)
+end
+
+local formattedTime = getFormattedTime()
+local Window = Library:CreateWindow("Zatiro Camlock|Credits to zatirohood | " .. formattedTime, Vector2.new(400, 350), Enum.KeyCode.RightShift)
+local PoloTab = Window:CreateTab("Main")
+local MiscTab = Window:CreateTab("Miscs")
+local CfgTab = Window:CreateTab("Config")
+
+local PoloSection = PoloTab:CreateSector("Settings", "left")
+local GuiSection = PoloTab:CreateSector("Gui Settings", "right")
+local Misc0Section = MiscTab:CreateSector("Esps", "left")
+local MiscSection = MiscTab:CreateSector("Miscs", "right")
+
+PoloSection:AddButton("ZatiroCam", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Matteoscripther/ZatiroHV2/refs/heads/main/ZatiroHV2.txt",true))()
+    print("script executed")
+end)
+
+local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
+
+local NotificationsEnabled = true
+
+local NotificationToggle = PoloSection:AddToggle("Notifications", false, function(isEnabled)
+    NotificationsEnabled = isEnabled
+    if not NotificationsEnabled then
+        RemoveNotifications()
+    end
+end)
+
+function SendNotification(message)
+    if NotificationsEnabled then
+        NotificationLoad:NewNotification({
+            ["Mode"] = "Custom",
+            ["Title"] = "Zati Camlock",
+            ["Description"] = message,
+            ["Notification_Image"] = "rbxassetid://78342062013795",
+            ["Notification_Sound"] = "rbxassetid://6518811702",
+            ["Timeout"] = 0.5,
+            ["Audio"] = true
+        })
+    end
+end
+
+function RemoveNotifications()
+    -- Implement logic to remove notifications if supported by the library
+end
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+
+local connection
+
+local function onHeartbeat()
+for _, Target in pairs(Players:GetPlayers()) do
+    if Target ~= localPlayer and Target.Character then
+        for _, Part in pairs(Target.Character:GetDescendants()) do
+            if Part:IsA("BasePart") then
+                Part.Velocity = Target.Character.Humanoid.MoveDirection * 16
+                Part.AssemblyLinearVelocity = Target.Character.Humanoid.MoveDirection * 16
+            end
+        end
+    end
+end
+end
+
+local function toggleResolver(enabled)
+if enabled then
+    if not connection then
+        connection = RunService.Heartbeat:Connect(onHeartbeat)
+    end
+else
+    if connection then
+        connection:Disconnect()
+        connection = nil
+    end
+end
+end
+
+PoloSection:AddToggle("Resolver", false, function(value)
+toggleResolver(value)
+end)
+
+-- Settings
+local Prediction = 0.206015 
+local XPrediction = 0.176073
+local YPrediction = 0.167092
+local Smoothness = 0.073
+local JumpOffset = 0.6
+local FallOffset = 0.6
+local SelectedPart = "UpperTorso"
+local CamlockKey = Enum.KeyCode.Q
+
+-- Auto Prediction Settings
+local AutoPredictionEnabled = false
+local Prediction = 0.206015  -- Default prediction value
+
+local pingValues = {
+    ["ping20_30"] = 0.12588,
+    ["ping30_40"] = 0.11,
+    ["ping40_50"] = 0.125,
+    ["ping50_60"] = 0.127668,
+    ["ping60_70"] = 0.12731,
+    ["ping70_80"] = 0.119,
+    ["ping80_90"] = 0.1347,
+    ["ping90_100"] = 0.136,
+    ["ping100_110"] = 0.130340,
+    ["ping110_120"] = 0.1455,
+    ["ping120_130"] = 0.14376,
+    ["ping130_140"] = 0.156692,
+    ["ping140_150"] = 0.1223333,
+    ["ping150_160"] = 0.15,
+    ["ping160_170"] = 0.16,
+    ["ping170_180"] = 0.1923111,
+    ["ping180_190"] = 0.19284,
+    ["ping190_200"] = 0.166547,
+    ["ping200_210"] = 0.16942,
+    ["ping210_220"] = 0.165566,
+    ["ping220_230"] = 0.165566,
+    ["ping230_240"] = 0.15692,
+    ["ping240_250"] = 0.16780,
+    ["ping250_260"] = 0.1651,
+    ["ping260_270"] = 0.175566,
+    ["ping270_280"] = 0.195566,
+    ["ping280_290"] = 0.16780,
+    ["ping290_300"] = 0.2784834,
+    ["ping300_310"] = 0.284638,
+    ["ping310_320"] = 0.2907926,
+    ["ping320_330"] = 0.2969472,
+    ["ping330_340"] = 0.3031018,
+    ["ping340_350"] = 0.3092564,
+    ["ping350_360"] = 0.315411,
+    ["ping360_370"] = 0.3215656,
+    ["ping370_380"] = 0.3277202,
+    ["ping380_390"] = 0.3338748,
+    ["ping390_400"] = 0.3400294,
+    ["ping400_410"] = 0.346184,
+    ["ping410_420"] = 0.3523386,
+    ["ping420_430"] = 0.3584932,
+    ["ping430_440"] = 0.3646478,
+    ["ping440_450"] = 0.3708024,
+    ["ping450_460"] = 0.376957,
+    ["ping460_470"] = 0.3831116,
+    ["ping470_480"] = 0.3892662,
+    ["ping480_490"] = 0.3954208,
+    ["ping490_500"] = 0.19284,
+}
+
+local function getCurrentPing()
+    return game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
+end
+
+local function updatePrediction()
+    local ping = getCurrentPing()
+    Prediction = pingValues["ping20_30"]  -- Default prediction
+
+    if ping >= 20 and ping < 30 then
+        Prediction = pingValues["ping20_30"]
+    elseif ping >= 30 and ping < 40 then
+        Prediction = pingValues["ping30_40"]
+    elseif ping >= 40 and ping < 50 then
+        Prediction = pingValues["ping40_50"]
+    elseif ping >= 50 and ping < 60 then
+        Prediction = pingValues["ping50_60"]
+    elseif ping >= 60 and ping < 70 then
+        Prediction = pingValues["ping60_70"]
+    elseif ping >= 70 and ping < 80 then
+        Prediction = pingValues["ping70_80"]
+    elseif ping >= 80 and ping < 90 then
+        Prediction = pingValues["ping80_90"]
+    elseif ping >= 90 and ping < 100 then
+        Prediction = pingValues["ping90_100"]
+    elseif ping >= 100 and ping < 110 then
+        Prediction = pingValues["ping100_110"]
+    elseif ping >= 110 and ping < 120 then
+        Prediction = pingValues["ping110_120"]
+    elseif ping >= 120 and ping < 130 then
+        Prediction = pingValues["ping120_130"]
+    elseif ping >= 130 and ping < 140 then
+        Prediction = pingValues["ping130_140"]
+    elseif ping >= 140 and ping < 150 then
+        Prediction = pingValues["ping140_150"]
+    elseif ping >= 150 and ping < 160 then
+        Prediction = pingValues["ping150_160"]
+    elseif ping >= 160 and ping < 170 then
+        Prediction = pingValues["ping160_170"]
+    elseif ping >= 170 and ping < 180 then
+        Prediction = pingValues["ping170_180"]
+    elseif ping >= 180 and ping < 190 then
+        Prediction = pingValues["ping180_190"]
+    elseif ping >= 190 and ping < 200 then
+        Prediction = pingValues["ping190_200"]
+    elseif ping >= 200 and ping < 210 then
+        Prediction = pingValues["ping200_210"]
+    elseif ping >= 210 and ping < 220 then
+        Prediction = pingValues["ping210_220"]
+    elseif ping >= 220 and ping < 230 then
+        Prediction = pingValues["ping220_230"]
+    elseif ping >= 230 and ping < 240 then
+        Prediction = pingValues["ping230_240"]
+    elseif ping >= 240 and ping < 250 then
+        Prediction = pingValues["ping240_250"]
+    elseif ping >= 250 and ping < 260 then
+        Prediction = pingValues["ping250_260"]
+    elseif ping >= 260 and ping < 270 then
+        Prediction = pingValues["ping260_270"]
+    elseif ping >= 270 and ping < 280 then
+        Prediction = pingValues["ping270_280"]
+    elseif ping >= 280 and ping < 290 then
+        Prediction = pingValues["ping280_290"]
+    elseif ping >= 290 and ping < 300 then
+        Prediction = pingValues["ping290_300"]
+    elseif ping >= 300 and ping < 310 then
+        Prediction = pingValues["ping300_310"]
+    elseif ping >= 310 and ping < 320 then
+        Prediction = pingValues["ping310_320"]
+    elseif ping >= 320 and ping < 330 then
+        Prediction = pingValues["ping320_330"]
+    elseif ping >= 330 and ping < 340 then
+        Prediction = pingValues["ping330_340"]
+    elseif ping >= 340 and ping < 350 then
+        Prediction = pingValues["ping340_350"]
+    elseif ping >= 350 and ping < 360 then
+        Prediction = pingValues["ping350_360"]
+    elseif ping >= 360 and ping < 370 then
+        Prediction = pingValues["ping360_370"]
+    elseif ping >= 370 and ping < 380 then
+        Prediction = pingValues["ping370_380"]
+    elseif ping >= 380 and ping < 390 then
+        Prediction = pingValues["ping380_390"]
+    elseif ping >= 390 and ping < 400 then
+        Prediction = pingValues["ping390_400"]
+    elseif ping >= 400 and ping < 410 then
+        Prediction = pingValues["ping400_410"]
+    elseif ping >= 410 and ping < 420 then
+        Prediction = pingValues["ping410_420"]
+    elseif ping >= 420 and ping < 430 then
+        Prediction = pingValues["ping420_430"]
+    elseif ping >= 430 and ping < 440 then
+        Prediction = pingValues["ping430_440"]
+    elseif ping >= 440 and ping < 450 then
+        Prediction = pingValues["ping440_450"]
+    elseif ping >= 450 and ping < 460 then
+        Prediction = pingValues["ping450_460"]
+    elseif ping >= 460 and ping < 470 then
+        Prediction = pingValues["ping460_470"]
+    elseif ping >= 470 and ping < 480 then
+        Prediction = pingValues["ping470_480"]
+    elseif ping >= 480 and ping < 490 then
+        Prediction = pingValues["ping480_490"]
+    elseif ping >= 490 and ping <= 500 then
+        Prediction = pingValues["ping490_500"]
+    end
+end
+
+PoloSection:AddToggle("Auto Prediction", AutoPredictionEnabled, function(state)
+    AutoPredictionEnabled = state
+    if state then
+        updatePrediction()  -- Update prediction when enabled
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if AutoPredictionEnabled then
+        updatePrediction()
+    end
+end)
+
+-- Dropdown for selecting hit part
+PoloSection:AddDropdown("HitPart", {"Head", "UpperTorso", "LowerTorso"}, "UpperTorso", false, function(dropdown)
+    SelectedPart = dropdown
+end)
+
+-- Textbox for manual prediction input (initially saved as a variable)
+PredictionTextbox = PoloSection:AddTextbox("Prediction", tostring(Prediction), function(State)
+    if not AutoPredictionEnabled then
+        Prediction = tonumber(State) or 0.206015
+    end
+end)
+
+-- Textbox for manual horizontal prediction input
+PoloSection:AddTextbox("Horizontal Prediction", tostring(XPrediction), function(State)
+    XPrediction = tonumber(State) or 0.176073
+end)
+
+-- Textbox for manual vertical prediction input
+PoloSection:AddTextbox("Vertical Prediction", tostring(YPrediction), function(State)
+    YPrediction = tonumber(State) or 0.167092
+end)
+
+-- Textbox for smoothness input
+PoloSection:AddTextbox("Smoothness", tostring(Smoothness), function(State)
+    Smoothness = tonumber(State) or 0.073
+end)
+
+-- Textbox for jump offset input
+PoloSection:AddTextbox("Jump Offset", tostring(JumpOffset), function(State)
+    JumpOffset = tonumber(State) or 0.6
+end)
+
+-- Textbox for fall offset input
+PoloSection:AddTextbox("Fall Offset", tostring(FallOffset), function(State)
+    FallOffset = tonumber(State) or 0.6
+end)
+
+-- Textbox for setting the camlock key
+PoloSection:AddTextbox("Camlock Key", tostring(CamlockKey.Name), function(State)
+    local firstChar = State:sub(1, 1):upper()  -- Only consider the first character and convert to uppercase
+    local keyCode = Enum.KeyCode[firstChar]
+    if keyCode then
+        CamlockKey = keyCode
+    else
+        print("Invalid key input.")  -- You can replace this with a notification or error handling if needed
+    end
+end)
+
+local ESPSettings = {
+Highlighter = false,
+DisplayName = false,
+HealthBar = false,
+OutlineESP = false,
+Username = false,  -- Added Username ESP setting
+UserID = false     -- Added UserID ESP setting
+}
+
+-- Functions to manage ESPs
+local function toggleHighlighter(state)
+ESPSettings.Highlighter = state
+updateHighlights()
+end
+
+local function toggleDisplayNameESP(state)
+ESPSettings.DisplayName = state
+updateDisplayNameESP()
+end
+
+local function toggleHealthBarESP(state)
+ESPSettings.HealthBar = state
+updateHealthBarESP()
+end
+
+local function toggleOutlineESP(state)
+ESPSettings.OutlineESP = state
+updateOutlineESP()
+end
+
+local function toggleUsernameESP(state)
+ESPSettings.Username = state
+updateUsernameESP()
+end
+
+local function toggleUserIDESP(state)
+ESPSettings.UserID = state
+updateUserIDESP()
+end
+
+-- Create the GUI Toggles
+Misc0Section:AddToggle("Highlighter ESP", ESPSettings.Highlighter, function(value)
+toggleHighlighter(value)
+end)
+
+Misc0Section:AddToggle("DisplayName ESP", ESPSettings.DisplayName, function(value)
+toggleDisplayNameESP(value)
+end)
+
+Misc0Section:AddToggle("HealthBar ESP", ESPSettings.HealthBar, function(value)
+toggleHealthBarESP(value)
+end)
+
+Misc0Section:AddToggle("Outline ESP", ESPSettings.OutlineESP, function(value)
+toggleOutlineESP(value)
+end)
+
+Misc0Section:AddToggle("Username ESP", ESPSettings.Username, function(value)
+toggleUsernameESP(value)
+end)
+
+Misc0Section:AddToggle("UserID ESP", ESPSettings.UserID, function(value)
+toggleUserIDESP(value)
+end)
+
+-- Update Functions for ESPs
+function updateHighlights()
+for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    local character = player.Character
+    if character then
+        if ESPSettings.Highlighter then
+            addHighlightToCharacter(character)
+        else
+            removeHighlightFromCharacter(character)
+        end
+    end
+end
+end
+
+function updateDisplayNameESP()
+for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        if ESPSettings.DisplayName then
+            addDisplayNameToCharacter(character, player)
+        else
+            removeDisplayNameFromCharacter(character)
+        end
+    end
+end
+end
+
+function updateHealthBarESP()
+for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    local character = player.Character
+    if character and character:FindFirstChild("Humanoid") then
+        if ESPSettings.HealthBar then
+            addHealthBarToCharacter(character)
+        else
+            removeHealthBarFromCharacter(character)
+        end
+    end
+end
+end
+
+function updateOutlineESP()
+for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        if ESPSettings.OutlineESP then
+            addOutlineToCharacter(character)
+        else
+            removeOutlineFromCharacter(character)
+        end
+    end
+end
+end
+
+function updateUsernameESP()
+for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        if ESPSettings.Username then
+            addUsernameToCharacter(character, player)
+        else
+            removeUsernameFromCharacter(character)
+        end
+    end
+end
+end
+
+function updateUserIDESP()
+for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        if ESPSettings.UserID then
+            addUserIDToCharacter(character, player)
+        else
+            removeUserIDFromCharacter(character)
+        end
+    end
+end
+end
+
+-- Function implementations for ESP
+function addHighlightToCharacter(character)
+if not character:FindFirstChild("HumanoidRootPart") then return end
+local highlight = character:FindFirstChild("Highlight")
+if not highlight then
+    highlight = Instance.new("Highlight")
+    highlight.Name = "Highlight"
+    highlight.Adornee = character
+    highlight.Parent = character
+end
+highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+highlight.FillColor = ESPSettings.Highlighter and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 0, 0)  -- Red fill color when active
+highlight.OutlineColor = Color3.fromRGB(255, 255, 255)  -- White outline for Highlighter
+highlight.FillTransparency = 0.5
+end
+
+function removeHighlightFromCharacter(character)
+local highlight = character:FindFirstChild("Highlight")
+if highlight then
+    highlight:Destroy()
+end
+end
+
+function addDisplayNameToCharacter(character, player)
+if character:FindFirstChild("DisplayNameTag") then return end
+local displayNameTag = Instance.new("BillboardGui")
+displayNameTag.Name = "DisplayNameTag"
+displayNameTag.Adornee = character.HumanoidRootPart
+displayNameTag.Size = UDim2.new(0, 100, 0, 50)  -- Smaller size for DisplayName
+displayNameTag.StudsOffset = Vector3.new(0, 2, 0)
+displayNameTag.AlwaysOnTop = true  -- Ensure it is visible through walls
+displayNameTag.Parent = character
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = player.DisplayName
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextScaled = true
+textLabel.BackgroundTransparency = 1
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.Parent = displayNameTag
+end
+
+function removeDisplayNameFromCharacter(character)
+local displayNameTag = character:FindFirstChild("DisplayNameTag")
+if displayNameTag then
+    displayNameTag:Destroy()
+end
+end
+
+function addHealthBarToCharacter(character)
+if character:FindFirstChild("HealthBarTag") then return end
+local healthBarTag = Instance.new("BillboardGui")
+healthBarTag.Name = "HealthBarTag"
+healthBarTag.Adornee = character.HumanoidRootPart
+healthBarTag.Size = UDim2.new(0, 10, 0, 65)  -- Larger HealthBar size
+healthBarTag.StudsOffset = Vector3.new(-2, 1, 0)
+healthBarTag.AlwaysOnTop = true  -- Ensure it is visible through walls
+healthBarTag.Parent = character
+
+local frame = Instance.new("Frame")
+frame.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- Green HealthBar
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.AnchorPoint = Vector2.new(0, 0)
+frame.Parent = healthBarTag
+
+local healthChangedConn
+local function updateHealthBar()
+    if character:FindFirstChild("Humanoid") then
+        frame.Size = UDim2.new(1, 0, character.Humanoid.Health / character.Humanoid.MaxHealth, 0)
+    end
+end
+
+healthChangedConn = character.Humanoid.HealthChanged:Connect(updateHealthBar)
+updateHealthBar()
+end
+
+function removeHealthBarFromCharacter(character)
+local healthBarTag = character:FindFirstChild("HealthBarTag")
+if healthBarTag then
+    healthBarTag:Destroy()
+end
+end
+
+function addOutlineToCharacter(character)
+if not character:FindFirstChild("HumanoidRootPart") then return end
+local outline = character:FindFirstChild("OutlineESP")
+if not outline then
+    outline = Instance.new("Highlight")
+    outline.Name = "OutlineESP"
+    outline.Adornee = character
+    outline.Parent = character
+end
+outline.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+outline.FillColor = Color3.fromRGB(0, 0, 0)  -- No fill color
+outline.OutlineColor = Color3.fromRGB(255, 0, 0)  -- Red outline
+outline.FillTransparency = 1
+end
+
+function removeOutlineFromCharacter(character)
+local outline = character:FindFirstChild("OutlineESP")
+if outline then
+    outline:Destroy()
+end
+end
+
+-- Add Username ESP
+function addUsernameToCharacter(character, player)
+if character:FindFirstChild("UsernameTag") then return end
+local usernameTag = Instance.new("BillboardGui")
+usernameTag.Name = "UsernameTag"
+usernameTag.Adornee = character.HumanoidRootPart
+usernameTag.Size = UDim2.new(0, 100, 0, 50)
+usernameTag.StudsOffset = Vector3.new(0, 3, 0)  -- Positioned above DisplayName
+usernameTag.AlwaysOnTop = true
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = player.Name
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextScaled = true
+textLabel.BackgroundTransparency = 1
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.Parent = usernameTag
+
+usernameTag.Parent = character
+end
+
+function removeUsernameFromCharacter(character)
+local usernameTag = character:FindFirstChild("UsernameTag")
+if usernameTag then
+    usernameTag:Destroy()
+end
+end
+
+-- Add UserID ESP
+function addUserIDToCharacter(character, player)
+if character:FindFirstChild("UserIDTag") then return end
+local userIDTag = Instance.new("BillboardGui")
+userIDTag.Name = "UserIDTag"
+userIDTag.Adornee = character.HumanoidRootPart
+userIDTag.Size = UDim2.new(0, 100, 0, 50)
+userIDTag.StudsOffset = Vector3.new(0, 1, 0)  -- Positioned below DisplayName
+userIDTag.AlwaysOnTop = true
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = tostring(player.UserId)
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextScaled = true
+textLabel.BackgroundTransparency = 1
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.Parent = userIDTag
+
+userIDTag.Parent = character
+end
+
+function removeUserIDFromCharacter(character)
+local userIDTag = character:FindFirstChild("UserIDTag")
+if userIDTag then
+    userIDTag:Destroy()
+end
+end
+
+-- Set up event listeners for players joining/leaving
+game:GetService("Players").PlayerAdded:Connect(function(player)
+player.CharacterAdded:Connect(function(character)
+    if ESPSettings.Highlighter then addHighlightToCharacter(character) end
+    if ESPSettings.DisplayName then addDisplayNameToCharacter(character, player) end
+    if ESPSettings.HealthBar then addHealthBarToCharacter(character) end
+    if ESPSettings.OutlineESP then addOutlineToCharacter(character) end
+    if ESPSettings.Username then addUsernameToCharacter(character, player) end
+    if ESPSettings.UserID then addUserIDToCharacter(character, player) end
+end)
+end)
+
+game:GetService("Players").PlayerRemoving:Connect(function(player)
+local character = player.Character
+if character then
+    removeHighlightFromCharacter(character)
+    removeDisplayNameFromCharacter(character)
+    removeHealthBarFromCharacter(character)
+    removeOutlineFromCharacter(character)
+    removeUsernameFromCharacter(character)
+    removeUserIDFromCharacter(character)
+end
+end)
+
+MiscSection:AddButton("Polos Old Camlock", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/polos%20old%20camlock%20protected",true))()
+     print("script executed")
+end)
+
+-- Services
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting = game:GetService("Lighting")
+
+-- Configurations
+local defaultZoomDistance = LocalPlayer.CameraMaxZoomDistance
+local AutoReload = false
+local rainbowRunning = false
+local originalMaterials = {}
+local originalColors = {}
+local resolutionConnection
+local isFullBright = false
+local isNoFog = false
+local antiStompEnabled = false
+local SpinningCursor = false
+local SpinPower = 10
+
+-- Store original lighting and fog settings
+local originalLighting = {
+    Ambient = Lighting.Ambient,
+    ColorShift_Bottom = Lighting.ColorShift_Bottom,
+    ColorShift_Top = Lighting.ColorShift_Top
+}
+
+local originalFog = {
+    FogEnd = Lighting.FogEnd,
+    FogStart = Lighting.FogStart,
+    FogColor = Lighting.FogColor
+}
+
+-- Helper Functions
+local function applyRainbowEffect(character)
+    for _, v in pairs(character:GetChildren()) do
+        if v:IsA("MeshPart") or v:IsA("Part") then
+            if not originalMaterials[v] then
+                originalMaterials[v] = {Material = v.Material, Color = v.Color}
+            end
+            v.Material = Enum.Material.ForceField
+        end
+    end
+
+    rainbowRunning = true
+    spawn(function()
+        while rainbowRunning do
+            for _, v in pairs(character:GetChildren()) do
+                if v:IsA("MeshPart") or v:IsA("Part") then
+                    v.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+                end
+            end
+            wait(0.1)
+        end
+    end)
+end
+
+local function removeRainbowEffect(character)
+    rainbowRunning = false
+    for _, v in pairs(character:GetChildren()) do
+        if v:IsA("MeshPart") or v:IsA("Part") then
+            if originalMaterials[v] then
+                v.Material = originalMaterials[v].Material
+                v.Color = originalMaterials[v].Color
+            end
+        end
+    end
+end
+
+local function toggleNoJumpCooldown(value)
+    noJumpCooldownEnabled = value
+end
+
+local function toggleRainbowCharacter(value)
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    if value then
+        applyRainbowEffect(character)
+    else
+        removeRainbowEffect(character)
+    end
+end
+
+local function toggleResolutionEffect(enabled)
+    local Camera = workspace.CurrentCamera
+    if enabled then
+        if not getgenv().Resolution then
+            getgenv().Resolution = {
+                [".gg/scripters"] = 0.65
+            }
+        end
+
+        if resolutionConnection then
+            resolutionConnection:Disconnect()
+        end
+
+        getgenv().gg_scripters = true
+        resolutionConnection = RunService.RenderStepped:Connect(
+            function()
+                if getgenv().gg_scripters then
+                    Camera.CFrame = Camera.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, getgenv().Resolution[".gg/scripters"], 0, 0, 0, 1)
+                end
+            end
+        )
+    else
+        getgenv().gg_scripters = nil
+        if resolutionConnection then
+            resolutionConnection:Disconnect()
+        end
+        resolutionConnection = nil
+        Camera.CFrame = CFrame.new(Camera.CFrame.Position)
+    end
+end
+
+local function toggleFullBright(state)
+    if state then
+        Lighting.Ambient = Color3.new(1, 1, 1)
+        Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
+        Lighting.ColorShift_Top = Color3.new(1, 1, 1)
+    else
+        Lighting.Ambient = originalLighting.Ambient
+        Lighting.ColorShift_Bottom = originalLighting.ColorShift_Bottom
+        Lighting.ColorShift_Top = originalLighting.ColorShift_Top
+    end
+    isFullBright = state
+end
+
+local function toggleNoFog(state)
+    if state then
+        Lighting.FogEnd = 1e10
+        Lighting.FogStart = 1e10
+        Lighting.FogColor = Color3.new(1, 1, 1)
+    else
+        Lighting.FogEnd = originalFog.FogEnd
+        Lighting.FogStart = originalFog.FogStart
+        Lighting.FogColor = originalFog.FogColor
+    end
+    isNoFog = state
+end
+
+local function toggleAntiStomp(state)
+    antiStompEnabled = state
+    if state then
+        LocalPlayer:GetMouse().KeyDown:Connect(function(KeyPressed)
+            if KeyPressed == "p" and antiStompEnabled then
+                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part:Destroy()
+                    end
+                end
+            end
+        end)
+    end
+end
+
+-- Connect Character Events
+LocalPlayer.CharacterAdded:Connect(function(character)
+    removeRainbowEffect(character)
+    if rainbowRunning then
+        applyRainbowEffect(character)
+    end
+end)
+
+LocalPlayer.CharacterRemoving:Connect(function(character)
+    removeRainbowEffect(character)
+end)
+
+-- Connect Toggle Buttons
+MiscSection:AddToggle("Inf Zoom", false, function(state)
+    if state then
+        defaultZoomDistance = LocalPlayer.CameraMaxZoomDistance
+        LocalPlayer.CameraMaxZoomDistance = math.huge
+    else
+        LocalPlayer.CameraMaxZoomDistance = defaultZoomDistance
+    end
+end)
+
+MiscSection:AddToggle("Auto Reload", false, function(state)
+    AutoReload = state
+end)
+
+-- Variables
+local IsA = game.IsA
+local newindex = nil
+local noJumpCooldownEnabled = false  -- Toggle state variable
+
+-- Toggle function with debugging
+local function toggleNoJumpCooldown(value)
+    noJumpCooldownEnabled = value
+    print("No Jump Cooldown Enabled:", noJumpCooldownEnabled)
+end
+
+-- Main hook with debugging
+newindex = hookmetamethod(game, "__newindex", function(self, Index, Value)
+    print("Intercepted __newindex:", self, Index, Value)
+    if not checkcaller() and IsA(self, "Humanoid") and Index == "JumpPower" then
+        if noJumpCooldownEnabled then
+            print("Blocking JumpPower change")
+            return  -- Block changes to JumpPower if toggle is on
+        end
+    end
+    
+    return newindex(self, Index, Value)
+end)
+
+-- Add toggle button to the MiscSection
+MiscSection:AddToggle("No Jump Cooldown", false, function(value)
+    toggleNoJumpCooldown(value)
+end)
+
+MiscSection:AddToggle("Rainbow Character", false, function(value)
+    toggleRainbowCharacter(value)
+end)
+
+MiscSection:AddToggle("Mobile Res", false, function(value)
+    toggleResolutionEffect(value)
+end)
+
+MiscSection:AddToggle("FullBright", false, function(state)
+    toggleFullBright(state)
+end)
+
+MiscSection:AddToggle("No Fog", false, function(state)
+    toggleNoFog(state)
+end)
+
+MiscSection:AddToggle("Anti Stomp", false, function(state)
+    toggleAntiStomp(state)
+end)
+
+MiscSection:AddToggle("Spinning Crosshair", false, function(state)
+    SpinningCursor = state
+end)
+
+MiscSection:AddTextbox("Spinning Speed", tostring(SpinPower), function(state)
+    SpinPower = tonumber(state) or 10
+end)
+
+RunService.Stepped:Connect(function()
+    if AutoReload then
+        local character = LocalPlayer.Character
+        if character then
+            local tool = character:FindFirstChildWhichIsA("Tool")
+            if tool and tool:FindFirstChild("Ammo") then
+                local ammo = tool.Ammo
+                if ammo.Value <= 0 then
+                    ReplicatedStorage.MainEvent:FireServer("Reload", tool)
+                end
+            end
+        end
+    end
+
+    if SpinningCursor then
+        local Aim = LocalPlayer.PlayerGui:WaitForChild("MainScreenGui"):WaitForChild("Aim")
+        Aim.Rotation = Aim.Rotation + SpinPower
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    local chatFrame = LocalPlayer.PlayerGui:WaitForChild("Chat"):WaitForChild("Frame"):WaitForChild("ChatChannelParentFrame")
+    local chatBar = LocalPlayer.PlayerGui:WaitForChild("Chat"):WaitForChild("Frame"):WaitForChild("ChatBarParentFrame")
+    local originalChatBarPosition = chatBar.Position
+
+    if chatFrame.Visible and chatBar.Position ~= originalChatBarPosition then
+        chatBar.Position = UDim2.new(0, 0, 1, -chatBar.Size.Y.Offset)
+    end
+end)
+
+MiscSection:AddButton("Q Gui", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/protected%20Q%20Gui",true))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("Server Hop To Good Ms", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/server%20hop%20to%20good%20ms",true))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("Macro Button", function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Unknownproootest/Permanent-Shift-Lock-Alt/alt/PermShiftlockAlt'))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("Macro Button V2", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/macro%20button",true))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("Macro Button V3", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DHBCommunity/DHBOfficialScript/main/MacroBalli"))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("Shiftlock Button", function()
+    loadstring(game:HttpGet("https://github.com/ltseverydayyou/uuuuuuu/blob/main/shiftlock?raw=true"))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Kirbsware Anti Lock", function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/wenny69420/KirbswareScripts/main/MobileV3'))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("Low Gfx", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/low%20gfx",true))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("Right Click", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DHBCommunity/DHBOfficialScript/main/RightClick"))()
+    print("script executed")
+end)
+
+MiscSection:AddButton("AntiLock Resolver", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/antilock%20resolver",true))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Vins Aim Viewer", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Nosssa/NossLock/main/VinGUI"))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Endless Esp", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/endless%20esp",true))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Cool Esp", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/cool%20esp",true))()
+print("script executed")
+end)
+
+MiscSection:AddButton("LightTuxs Esp (Gui)", function()
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/cool83birdcarfly02six/UNIVERSALESPLTX/main/README.md'),true))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Direct Rejoin Script", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/Direct/main/Rejoin",true))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Fly Script", function()
+loadstring(game:HttpGet("https://pastebin.com/raw/gJfKgLra",true))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Tpwalk Script", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/TheRealXORA/Roblox/032418166a40fd7a610fd7a17a2f8ade0da3c734/Tpwalk%20V4%20%5B%20BETA%20%5D.lua",true))()
+print("script executed")
+end)
+
+MiscSection:AddButton("Anti Aim Viewer", function()
+local China = setmetatable({}, {
+   __index = function(Company, Price)
+       return game:GetService(Price)
+   end})
+
+local chatFrame = LocalPlayer.PlayerGui:WaitForChild("Chat"):WaitForChild("Frame"):WaitForChild("ChatChannelParentFrame")
+local chatBar = LocalPlayer.PlayerGui:WaitForChild("Chat"):WaitForChild("Frame"):WaitForChild("ChatBarParentFrame")
+local originalChatBarPosition = chatBar.Position
+
+local function updateChatVisibility(state)
+    if state then
+        chatFrame.Visible = true
+        if chatBar.Position == originalChatBarPosition then
+            chatBar.Position = UDim2.new(0, 0, 1, -chatBar.Size.Y.Offset)
+        end
+    else
+        chatFrame.Visible = false
+        chatBar.Position = originalChatBarPosition
+    end
+end
+
+MiscSection:AddToggle("Chat Spy", false, function(state)
+    updateChatVisibility(state)
+end)
+
+RunService.RenderStepped:Connect(function()
+    if chatFrame.Visible and chatBar.Position ~= originalChatBarPosition then
+        chatBar.Position = UDim2.new(0, 0, 1, -chatBar.Size.Y.Offset)
+    end
+end)
+
+local Players = China.Players
+local ReplicatedStorage = China.ReplicatedStorage
+
+--//Variables
+local LocalPlayer = Players.LocalPlayer
+local Mouse =  LocalPlayer:GetMouse()
+
+local MainEvent = ReplicatedStorage:FindFirstChild("MainEvent") or nil
+local Tool = nil
+
+Bypass = function(Entity)
+   Entity.ChildAdded:Connect(function(Child)
+       if Child:IsA("Tool") then
+         Tool = Child.Activated:Connect(function()
+               if MainEvent then
+                  MainEvent:FireServer("UpdateMousePos", Mouse.Hit.Position)
+               end
+           end)
+       end
+   end)
+end
+
+
+
+local Alive = function(Player)
+   return Player and Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") or false
+end
+
+LocalPlayer.CharacterAdded:Connect(function(Character)
+   Bypass(Character)
+end)
+
+if Alive(LocalPlayer) then
+   LocalPlayer.Character.Humanoid:UnequipTools()
+   Bypass(LocalPlayer.Character)
+end
+
+local Hook
+Hook = hookmetamethod(game, "__namecall", function(self, ...)
+   local Args = {...}
+   local Method = getnamecallmethod()
+
+   if not checkcaller() and Method == "FireServer" and self.Name == "MainEvent" and Args[1] == "UpdateMousePos" then
+
+      Args[2] = "Scarcin made this" and Mouse.Hit.Position
+
+       return self.FireServer(self, unpack(Args))
+   end
+
+   return Hook(self, ...)
+end)
+print("script executed")
+end)
+
+MiscSection:AddButton("Inventory Sorter", function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/shakar60/scripts/main/inventory%20sorter",true))()
+print("script executed")
+end)
+
+CfgTab:CreateConfigSystem("left")
+
+-- Polos Camlock
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+local Locked = false
+local CamlockState = false
+
+function FindNearestEnemy()
+    local ClosestDistance, ClosestPart = math.huge, nil
+    local CenterPosition = Vector2.new(
+        game:GetService("GuiService"):GetScreenResolution().X / 2,
+        game:GetService("GuiService"):GetScreenResolution().Y / 2
+    )
+
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer then
+            local Character = Player.Character
+            if Character and Character:FindFirstChild("HumanoidRootPart") and Character.Humanoid.Health > 0 then
+                local part = Character:FindFirstChild(SelectedPart)
+                if part then
+                    local Position, IsVisibleOnViewport = Camera:WorldToViewportPoint(part.Position)
+
+                    if IsVisibleOnViewport then
+                        local Distance = (CenterPosition - Vector2.new(Position.X, Position.Y)).Magnitude
+                        if Distance < ClosestDistance then
+                            ClosestPart = part
+                            ClosestDistance = Distance
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return ClosestPart
+end
+
+local enemy = nil
+
+RunService.Heartbeat:Connect(function()
+    if CamlockState and enemy then
+        if enemy.Parent and enemy.Parent:FindFirstChild(SelectedPart) then
+            local targetPosition = enemy.Parent[SelectedPart].Position + enemy.Parent[SelectedPart].Velocity * Prediction
+            targetPosition = Vector3.new(
+                targetPosition.X + XPrediction,
+                targetPosition.Y + YPrediction + JumpOffset - FallOffset,  -- Apply Jump Offset and Fall Offset
+                targetPosition.Z
+            )
+
+            local currentPosition = Camera.CFrame.Position
+            local newPosition = currentPosition:Lerp(targetPosition, Smoothness)
+
+            Camera.CFrame = CFrame.new(newPosition, targetPosition)
+        end
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == CamlockKey then
+        Locked = not Locked
+        if Locked then
+            enemy = FindNearestEnemy()
+            CamlockState = true
+            SendNotification("Locking On " .. (enemy.Parent and enemy.Parent.Name or "Unknown Player"))
+            TextButton.Image = "rbxassetid://72590084838674"
+        else
+            if enemy then
+                enemy = nil
+                CamlockState = false
+                SendNotification("Unlocked")
+            end
+            TextButton.Image = "rbxassetid://105713683367381"
+        end
+    end
+end)
+
+-- Polos Gui
+local PolosGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local UICornerFrame = Instance.new("UICorner")
+local TextButton = Instance.new("ImageButton")
+local UICornerButton = Instance.new("UICorner")
+
+PolosGui.Name = "PolosGui"
+PolosGui.Parent = game.CoreGui
+PolosGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = PolosGui
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Size = UDim2.new(0, 100, 0, 90)  -- Adjusted size
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+Frame.Position = UDim2.new(1, 100, 0.4, 0)  -- Start off-screen to the right
+Frame.Active = true
+Frame.Draggable = true  -- Make the frame draggable
+
+UICornerFrame.Parent = Frame
+UICornerFrame.CornerRadius = UDim.new(0, 10)
+
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BackgroundTransparency = 0.5
+TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.5, -40, 0.12, 0)
+TextButton.Size = UDim2.new(0, 80, 0, 67)
+TextButton.Image = "rbxassetid://105713683367381"
+TextButton.ScaleType = Enum.ScaleType.Fit
+TextButton.ImageTransparency = 0.5
+TextButton.MouseButton1Click:Connect(function()
+    Locked = not Locked
+    if Locked then
+        enemy = FindNearestEnemy()
+        CamlockState = true
+        SendNotification("Locking On " .. (enemy.Parent and enemy.Parent.Name or "Unknown Player"))
+        TextButton.Image = "rbxassetid://72590084838674"
+    else
+        if enemy then
+            enemy = nil
+            CamlockState = false
+            SendNotification("Unlocked")
+        end
+        TextButton.Image = "rbxassetid://105713683367381"
+    end
+end)
+
+UICornerButton.Parent = TextButton
+UICornerButton.CornerRadius = UDim.new(0, 10)
+
+-- Animate PolosGui entrance
+local TweenInfoPolosGui = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+local TargetPositionPolosGui = UDim2.new(0.1, 0, 0.4, 0)
+local TweenPolosGui = TweenService:Create(Frame, TweenInfoPolosGui, {Position = TargetPositionPolosGui})
+TweenPolosGui:Play()
+
+local TweenService = game:GetService("TweenService")
+
+local function createToggleGui()
+    local ToggleGui = Instance.new("ScreenGui")
+    local Toggle = Instance.new("TextButton")
+    local UICorner = Instance.new("UICorner")
+    local UIStroke = Instance.new("UIStroke")
+
+    ToggleGui.Name = "Toggle Gui"
+    ToggleGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    ToggleGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ToggleGui.ResetOnSpawn = false
+
+    Toggle.Name = "Toggle"
+    Toggle.Parent = ToggleGui
+    Toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Toggle.Position = UDim2.new(0.5, -25, 1, 50) -- Start off-screen at the bottom center
+    Toggle.Size = UDim2.new(0, 50, 0, 50)
+    Toggle.Font = Enum.Font.SourceSans
+    Toggle.Text = "Toggle Gui"
+    Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Toggle.TextSize = 13
+    Toggle.Draggable = true
+
+    UICorner.CornerRadius = UDim.new(0, 20)
+    UICorner.Parent = Toggle
+
+    UIStroke.Parent = Toggle
+    UIStroke.Thickness = 3
+    UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+    local function RainbowEffect()
+        local hue = 0
+        while ToggleGui and ToggleGui.Parent do
+            hue = (hue + 1) % 360
+            local color = Color3.fromHSV(hue / 360, 1, 1)
+            UIStroke.Color = color
+            wait(0.01)
+        end
+    end
+
+    spawn(RainbowEffect)
+
+    -- Animate Toggle entrance
+    local TweenInfoToggleGui = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    local TargetPositionToggleGui = UDim2.new(0.5, -25, 0.05, 0)
+    local TweenToggleGui = TweenService:Create(Toggle, TweenInfoToggleGui, {Position = TargetPositionToggleGui})
+    TweenToggleGui:Play()
+
+    -- Connect the toggle button click event
+    Toggle.MouseButton1Click:Connect(function()
+        -- Send RightShift key events
+        local VirtualInputManager = game:GetService("VirtualInputManager")
+        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.RightShift, false, game)
+        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.RightShift, false, game)
+    end)
+
+    return ToggleGui
+end
+
+-- Initialize the toggle GUI
+local ToggleGui = createToggleGui()
+
+-- Function to toggle the visibility of the ToggleGui from the UI library toggle button
+local function toggleGuiVisibility(state)
+    ToggleGui.Enabled = state
+end
+
+-- UI library toggle button for controlling the ToggleGui
+GuiSection:AddToggle("Toggle Gui", true, function(state)
+    toggleGuiVisibility(state)
+end)
+
+
+local originalSize = TextButton.Size
+local originalPosition = TextButton.Position
+local notificationSent = false
+
+-- Function to show/hide the PolosGui
+local function togglePolosGui(state)
+    if PolosGui then
+        PolosGui.Enabled = state
+        
+        if state then
+            -- Restore the original size and position
+            TextButton.Size = originalSize
+            TextButton.Position = originalPosition
+        end
+    end
+end
+
+-- UI library toggle button for PolosGui
+GuiSection:AddToggle("Camlock Gui Toggle", true, function(state)
+    togglePolosGui(state)
+end)
+
+-- Info Notification
+local function showInfoNotification()
+    if not notificationSent then
+        NotificationLoad:NewNotification({
+            ["Mode"] = "Custom",
+            ["Title"] = "Info:",
+            ["Description"] = "Use the toggle button to hide/show the Camlock Gui and the toggle button gui.",
+            ["Notification_Image"] = "rbxassetid://18985517155",
+            ["Notification_Sound"] = "rbxassetid://5153734608",
+            ["Timeout"] = 20,
+            ["Audio"] = true
+        })
+
+        notificationSent = true
+    end
+end
+
+showInfoNotification()
+
+
+-- Notifications
+
+NotificationLoad:NewNotification({
+["Mode"] = "Custom",
+["Title"] = "Zati Camlock Loaded!",
+["Description"] = "Welcome User! camlock is an camlock script that aims for you in most Of The Games.",
+["Notification_Image"] = "rbxassetid://18985517155",
+["Notification_Sound"] = "rbxassetid://5153734608",
+["Timeout"] = 10,
+["Audio"] = true
+})
+
+wait(2)
+NotificationLoad:NewNotification({
+["Mode"] = "Custom",
+["Title"] = "Credits:",
+["Description"] = "Credits To Zatirohood",
+["Notification_Image"] = "rbxassetid://18985517155",
+["Notification_Sound"] = "rbxassetid://5153734608",
+["Timeout"] = 10,
+["Audio"] = false
+})
