@@ -1,0 +1,168 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local CamlockState = false
+local Prediction = 0.18474847487487474
+local HorizontalPrediction = 0.827282
+local VerticalPrediction = 0.174747743774747474737737373773
+local XPrediction = 020
+local YPrediction = 200
+
+local Locked = true
+getgenv().Key = "q"
+
+local enemy = nil
+local strafeAngle = 0
+local Locking = true
+
+function FindNearestEnemy()
+    local ClosestDistance, ClosestPlayer = math.huge, nil
+    local CenterPosition =
+        Vector2.new(
+            game:GetService("GuiService"):GetScreenResolution().X / 2,
+            game:GetService("GuiService"):GetScreenResolution().Y / 2
+        )
+
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer then
+            local Character = Player.Character
+            if Character and Character:FindFirstChild("HumanoidRootPart") and Character.Humanoid.Health > 0 then
+                local Position, IsVisibleOnViewport =
+                    workspace.CurrentCamera:WorldToViewportPoint(Character.HumanoidRootPart.Position)
+
+                if IsVisibleOnViewport then
+                    local Distance = (CenterPosition - Vector2.new(Position.X, Position.Y)).Magnitude
+                    if Distance < ClosestDistance then
+                        ClosestPlayer = Character.HumanoidRootPart
+                        ClosestDistance = Distance
+                    end
+                end
+            end
+        end
+    end
+
+    return ClosestPlayer
+end
+
+-- Function to aim the camera and handle strafing
+RunService.Heartbeat:Connect(function()
+    if CamlockState and enemy then
+        local camera = workspace.CurrentCamera
+        camera.CFrame = CFrame.new(camera.CFrame.p, enemy.Position + enemy.Velocity * Prediction)
+
+        -- Implement target strafe
+        if getgenv().Elysian['HvH']['Target Strafe']['Enabled'] and Locking and enemy and enemy.Parent and enemy.Parent:FindFirstChild("HumanoidRootPart") then
+            local targetHRP = enemy -- Use the locked enemy's HumanoidRootPart
+            strafeAngle = strafeAngle + math.rad(getgenv().Elysian['HvH']['Target Strafe']['Speed'])
+
+            local distance = getgenv().Elysian['HvH']['Target Strafe']['Distance']
+            local height = getgenv().Elysian['HvH']['Target Strafe']['Height']
+
+            local offsetX = math.sin(strafeAngle) * distance
+            local offsetZ = math.cos(strafeAngle) * distance
+            local offsetY = math.sin(strafeAngle * 2) * height
+
+            local predictedPosition = calculatePosition(targetHRP, playerData[enemy.Parent].Velocity)
+            local strafePosition = predictedPosition + Vector3.new(offsetX, offsetY, offsetZ)
+
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(strafePosition, predictedPosition)
+            end
+        end
+    end
+end)
+
+Mouse.KeyDown:Connect(function(k)    
+    if k == getgenv().Key then    
+        Locked = not Locked    
+        if Locked then    
+            enemy = FindNearestEnemy()
+            CamlockState = true
+            -- Enable strafing once locked onto the enemy
+            if enemy then
+                Locking = true -- Set Locking to true
+            end
+        else    
+            if enemy ~= nil then    
+                enemy = nil    
+                CamlockState = false
+                Locking = false -- Disable Locking when not locked
+            end    
+        end    
+    end    
+end)
+
+local JoshzzV2 = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local Logo = Instance.new("ImageLabel")
+local TextButton = Instance.new("TextButton")
+local UICorner_2 = Instance.new("UICorner")
+
+-- GUI Properties
+JoshzzV2.Name = "JoshzzV2"
+JoshzzV2.Parent = game.CoreGui
+JoshzzV2.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = JoshzzV2
+Frame.BackgroundColor3 = Color3.fromRGB(1, 1, 1)
+Frame.BorderColor3 = Color3.fromRGB(1, 1, 1)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0.133798108, 0, 0.20107238, 0)
+Frame.Size = UDim2.new(0, 202, 0, 70)
+Frame.Active = true
+Frame.Draggable = true
+
+local function TopContainer()
+    Frame.Position = UDim2.new(0.5, -Frame.AbsoluteSize.X / 2, 0, -Frame.AbsoluteSize.Y / 2)
+end
+
+TopContainer()
+Frame:GetPropertyChangedSignal("AbsoluteSize"):Connect(TopContainer)
+
+UICorner.Parent = Frame
+
+Logo.Name = "Logo"
+Logo.Parent = Frame
+Logo.BackgroundColor3 = Color3.fromRGB(188, 255, 188)
+Logo.BackgroundTransparency = 3.000
+Logo.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Logo.BorderSizePixel = 0
+Logo.Position = UDim2.new(0.326732665, 0, 0, 0)
+Logo.Size = UDim2.new(0, 70, 0, 70)
+Logo.Image = "rbxassestid://84481729686074"
+Logo.ImageTransparency = 0.300
+
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+TextButton.BackgroundTransparency = 5.000
+TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.0792079195, 0, 0.18571429, 0)
+TextButton.Size = UDim2.new(0, 170, 0, 44)
+TextButton.Font = Enum.Font.SourceSansSemibold
+TextButton.Text = "Toggle Zati"
+TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.TextScaled = true
+TextButton.TextSize = 18.000
+TextButton.TextWrapped = true
+
+local state = true
+Notification = true
+TextButton.MouseButton1Click:Connect(
+    function()
+        state = not state
+        if not state then
+            TextButton.Text = "Zati ON"
+            CamlockState = true
+            enemy = FindNearestEnemy()
+            Locking = true -- Enable locking on the enemy when toggled on
+        else
+            TextButton.Text = "Zati OFF"
+            CamlockState = false
+            enemy = nil
+            Locking = false -- Disable locking when toggled off
+        end
+    end
+)
